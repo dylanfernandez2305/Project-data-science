@@ -1,0 +1,2 @@
+Placeholder file to keep the saved_models directory in Git.
+Trained model artifacts (trained_models.pkl) should be placed here locally but are not stored in the repository.
