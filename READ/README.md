@@ -87,7 +87,7 @@ Project_data_science_source/
 │
 ├── READ/                                         # Documentation
 │   ├── README.md                                 # This file - complete guide
-│   └── Proposal.md                  (124 lines)  # Project proposal
+│   └── Proposal.md                   (69 lines)  # Project proposal
 │
 └── environment.yml                               # Conda environment specification
 ```
