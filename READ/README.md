@@ -60,26 +60,26 @@ python menu.py
 **Class Imbalance**: ~0.172% fraud rate (492 fraudulent transactions)
 
 ## Project Structure
-
-## Project Structure
 ```
 Project_data_science_source/
-├── .gitignore                                # Git ignore rules
-├── AI-USAGE.md                               # AI tools transparency disclosure
+├── READ/                                     # Documentation
+│   ├── README.md                                   # Project overview, setup & usage instructions
+│   └── Proposal.md                   (70 lines)    # Project proposal
+│
 ├── src/                                      # Source code
-│   ├── main.py                      (290 lines)  # Data loading & preprocessing
-│   ├── models_calibration.py        (702 lines)  # Hyperparameter optimization
-│   ├── models_application.py        (429 lines)  # Model evaluation
-│   ├── performance_visualization.py (589 lines)  # Results & data visualization
-│   └── menu.py                      (670 lines)  # Interactive menu system
+│   ├── main.py                       (290 lines)   # Data loading & preprocessing
+│   ├── models_calibration.py         (702 lines)   # Hyperparameter optimization
+│   ├── models_application.py         (429 lines)   # Model evaluation
+│   ├── performance_visualization.py  (589 lines)   # Results & data visualization
+│   └── menu.py                       (670 lines)   # Interactive menu system
 │
-├── data/                                     # Dataset storage
-│   └── creditcard.csv                        # Kaggle dataset (auto-downloaded)
+├── data/                                    # Dataset storage
+│   └── creditcard.csv                              # Kaggle dataset (auto-downloaded)
 │
-├── saved_models/                             # Trained model storage
-│   └── trained_models.pkl                    # All 8 models + ensemble
+├── saved_models/                            # Trained model storage
+│   └── trained_models.pkl                          # All 8 models + ensemble
 │
-├── output/                                   # Generated visualizations
+├── output/                                  # Generated visualizations
 │   ├── 0_class_distribution.png
 │   ├── 0_amount_distribution.png
 │   ├── 1_confusion_matrices.png
@@ -92,11 +92,9 @@ Project_data_science_source/
 │   ├── 8_feature_importance_lr.png
 │   └── 9_lr_coefficients_signed.png
 │
-├── READ/                                     # Documentation
-│   ├── README.md                             # This file - complete guide
-│   └── Proposal.md                (70 lines) # Project proposal
-│
-└── environment.yml                           # Conda environment specification
+├── environment.yml                          # Conda environment specification
+├── AI-USAGE.md                              # AI tools transparency disclosure
+└── .gitignore                               # Git ignore rules
 ```
 
 **Total Code Lines**: 2,680 lines (including blank lines and comments)
@@ -137,9 +135,14 @@ Project_data_science_source/
 
 ### Robust Data Preprocessing
 - RobustScaler normalization (resistant to outliers)
-- Time-series split (80/20 train/test)
+- Three-way chronological split (64% train / 16% validation / 20% test)
 - SMOTE oversampling for class imbalance
 - Dataset reduction for distance-based models (30% chronological sampling)
+
+### Preventing Data Leakage
+- Validation-only threshold optimization and ensemble selection
+- Test set strictly held out for final unbiased evaluation
+- Three-way split prevents overfitting to test data (64/16/20)
 
 ### Model Evaluation
 - F1-score optimized thresholds
@@ -189,8 +192,9 @@ Test set results (56,746 transactions, 98 frauds, validation-optimized threshold
 | GMM (Semi-Sup) | 0.26 | 0.36 | 0.31 | 0.958 |
 | IF (Semi-Sup) | 0.13 | 0.47 | 0.20 | 0.939 |
 
-**Note**: Supervised models significantly outperform unsupervised/semi-supervised approaches. See full report for detailed analysis.
-- Performance may vary slightly with different random seeds despite fixed seed (42) due to Optuna's stochastic optimization
+**Important**: All thresholds were optimized exclusively on the validation set. Test set metrics reflect true generalization performance without data leakage.
+
+**Note**: Supervised models significantly outperform unsupervised/semi-supervised approaches. Performance may vary slightly with different random seeds despite fixed seed (42) due to Optuna's stochastic optimization.
 
 ## Installation
 
