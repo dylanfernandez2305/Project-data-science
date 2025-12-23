@@ -200,15 +200,23 @@ def load_and_prepare_data():
     # Save feature names AFTER dropping Time column
     feature_names = X.columns.tolist()
 
-    # Chronological split (80% train, 20% test)
+    # Chronological split (64% train, 16% validation, 20% test)
     ## Avoids temporal leakage and ensures enough fraudulent data in training data
-    split_index = int(0.8 * len(card_data))
+    ## Validation set is used for threshold selection and ensemble calibration
+    train_split = int(0.64 * len(card_data))
+    val_split = int(0.80 * len(card_data))
 
-    X_train, X_test = X.iloc[:split_index], X.iloc[split_index:]
-    y_train, y_test = y.iloc[:split_index], y.iloc[split_index:]
+    X_train = X.iloc[:train_split]
+    X_val = X.iloc[train_split:val_split]
+    X_test = X.iloc[val_split:]
+
+    y_train = y.iloc[:train_split]
+    y_val = y.iloc[train_split:val_split]
+    y_test = y.iloc[val_split:]
 
     scaler = RobustScaler()
     X_train = scaler.fit_transform(X_train)
+    X_val = scaler.transform(X_val)
     X_test = scaler.transform(X_test)
 
     small_tscv = TimeSeriesSplit(n_splits=2)
@@ -232,8 +240,10 @@ def load_and_prepare_data():
     # Return all necessary variables
     return {
         'X_train': X_train,
+        'X_val': X_val,
         'X_test': X_test,
         'y_train': y_train,
+        'y_val': y_val,
         'y_test': y_test,
         'X_train_normal': X_train_normal,
         'X_train_res': X_train_res,
@@ -261,6 +271,10 @@ def main():
     frauds_train = data['y_train'].sum()
     total_train = len(data['y_train'])
     print(f"Training set: {frauds_train} frauds out of {total_train} transactions")
+
+    frauds_val = data['y_val'].sum()
+    total_val = len(data['y_val'])
+    print(f"Validation set: {frauds_val} frauds out of {total_val} transactions")
 
     frauds_test = data['y_test'].sum()
     total_test = len(data['y_test'])

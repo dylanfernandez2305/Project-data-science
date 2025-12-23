@@ -644,7 +644,7 @@ def load_models(filename='trained_models.pkl'):
                 f"Your trained_models.pkl was created with a different numpy version\n"
                 f"and cannot be loaded with numpy {np.__version__}.\n\n"
                 f"Solution: Retrain models with current environment (takes 5-10 min):\n"
-                f"  cd /Users/noamifergan/Desktop/Cours/PROJET_DYLAN/src\n"
+                f"  cd src\n"
                 f"  python3 models_calibration.py\n\n"
                 f"This will create a new compatible trained_models.pkl file.\n"
                 f"{'='*60}\n"

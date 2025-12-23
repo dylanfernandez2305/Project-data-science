@@ -1,5 +1,9 @@
 # Credit Card Fraud Detection
 
+[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![License: Academic](https://img.shields.io/badge/license-Academic-green.svg)]()
+[![UNIL](https://img.shields.io/badge/University-UNIL-7B1FA2.svg)](https://www.unil.ch/)
+
 ## Project Overview
 
 This project implements a comprehensive fraud detection system using machine learning techniques to identify fraudulent credit card transactions. The system employs multiple supervised, unsupervised, and semi-supervised learning approaches with Bayesian hyperparameter optimization.
@@ -57,22 +61,25 @@ python menu.py
 
 ## Project Structure
 
+## Project Structure
 ```
 Project_data_science_source/
-├── src/                                          # Source code
-│   ├── main.py                      (180 lines)  # Data loading & preprocessing
-│   ├── models_calibration.py        (521 lines)  # Hyperparameter optimization
-│   ├── models_application.py        (236 lines)  # Model evaluation
-│   ├── performance_visualization.py (410 lines)  # Results & data visualization
-│   └── menu.py                      (524 lines)  # Interactive menu system
+├── .gitignore                                # Git ignore rules
+├── AI-USAGE.md                               # AI tools transparency disclosure
+├── src/                                      # Source code
+│   ├── main.py                      (290 lines)  # Data loading & preprocessing
+│   ├── models_calibration.py        (702 lines)  # Hyperparameter optimization
+│   ├── models_application.py        (429 lines)  # Model evaluation
+│   ├── performance_visualization.py (589 lines)  # Results & data visualization
+│   └── menu.py                      (670 lines)  # Interactive menu system
 │
-├── data/                                         # Dataset storage
-│   └── creditcard.csv                            # Kaggle dataset (auto-downloaded)
+├── data/                                     # Dataset storage
+│   └── creditcard.csv                        # Kaggle dataset (auto-downloaded)
 │
-├── saved_models/                                 # Trained model storage
-│   └── trained_models.pkl                        # All 8 models + ensemble
+├── saved_models/                             # Trained model storage
+│   └── trained_models.pkl                    # All 8 models + ensemble
 │
-├── output/                                       # Generated visualizations
+├── output/                                   # Generated visualizations
 │   ├── 0_class_distribution.png
 │   ├── 0_amount_distribution.png
 │   ├── 1_confusion_matrices.png
@@ -85,15 +92,14 @@ Project_data_science_source/
 │   ├── 8_feature_importance_lr.png
 │   └── 9_lr_coefficients_signed.png
 │
-├── READ/                                         # Documentation
-│   ├── README.md                                 # This file - complete guide
-│   └── Proposal.md                   (69 lines)  # Project proposal
+├── READ/                                     # Documentation
+│   ├── README.md                             # This file - complete guide
+│   └── Proposal.md                (70 lines) # Project proposal
 │
-└── environment.yml                               # Conda environment specification
+└── environment.yml                           # Conda environment specification
 ```
 
-**Total Code Lines**: 1,871 lines (excluding blank lines and comments)
-
+**Total Code Lines**: 2,680 lines (including blank lines and comments)
 ## Implemented Models
 
 ### Supervised Learning
@@ -173,17 +179,18 @@ Project_data_science_source/
 
 ## Performance Metrics
 
-Typical results on test set (56,745 transactions, 74 frauds):
+Test set results (56,746 transactions, 98 frauds, validation-optimized thresholds):
 
-| Model | Precision | Recall | F1-Score | ROC-AUC |
-|-------|-----------|--------|----------|---------|
-| Random Forest | 0.96 | 0.70 | 0.81 | 0.979 |
-| Logistic Regression | 0.73 | 0.76 | 0.74 | 0.979 |
-| F1-Weighted Ensemble | 0.96 | 0.68 | 0.79 | 0.973 |
-| ISO Forest (Semi-Sup) | 0.14 | 0.41 | 0.21 | 0.934 |
-| GMM (Semi-Sup) | 0.21 | 0.46 | 0.29 | 0.932 |
+| Model | Fraud Precision | Fraud Recall | Fraud F1 | ROC-AUC |
+|-------|----------------|--------------|----------|---------|
+| RF (Supervised) | 0.85 | 0.72 | **0.78** | 0.962 |
+| LR (Supervised) | 0.78 | 0.64 | 0.70 | 0.980 |
+| Ensemble | 0.45 | 0.64 | 0.53 | 0.933 |
+| GMM (Semi-Sup) | 0.26 | 0.36 | 0.31 | 0.958 |
+| IF (Semi-Sup) | 0.13 | 0.47 | 0.20 | 0.939 |
 
-**Note**: Performance may vary depending on random seed and Optuna trial results.
+**Note**: Supervised models significantly outperform unsupervised/semi-supervised approaches. See full report for detailed analysis.
+- Performance may vary slightly with different random seeds despite fixed seed (42) due to Optuna's stochastic optimization
 
 ## Installation
 
@@ -482,5 +489,12 @@ After running the complete pipeline:
 ## Author and Contact
 
 **Dylan Fernandez**
+**Student ID**: [20428967] 
 University of Lausanne
 Dylan.Fernandez@unil.ch
+
+## AI Tools Disclosure
+
+This project used AI tools (ChatGPT, Claude) for code review, documentation, and report writing assistance. 
+
+**Full transparency report**: See [AI-USAGE.md](AI-USAGE.md) for detailed disclosure of AI tool usage.

@@ -574,48 +574,49 @@ def view_project_info():
 
     info = """
 PROJECT: Fraud Detection Pipeline
-DESCRIPTION: Complete machine learning pipeline for credit card fraud detection
+DESCRIPTION: End-to-end ML pipeline for credit card fraud detection (supervised, unsupervised, semi-supervised)
 
-MODULES:
-  • main.py                     - Data loading and preprocessing
-  • models_calibration.py       - Model training (8 models)
-  • models_application.py       - Prediction and evaluation
-  • performance_visualization.py - Performance charts
-  • run_pipeline.py             - Master orchestrator
-  • menu.py                     - This interactive menu
+MODULES (src/):
+  • main.py                     - Data loading, preprocessing, feature engineering, chronological splitting
+  • models_calibration.py       - Model calibration/training (Optuna + TimeSeriesSplit)
+  • models_application.py       - Model application and evaluation (validation-based thresholding)
+  • performance_visualization.py - Performance plots (PR/ROC, confusion matrices, metrics)
+  • menu.py                     - Interactive CLI menu (this file)
 
-MODELS TRAINED:
+MODELS:
   Supervised:
     • Logistic Regression
     • Random Forest
 
-  Unsupervised:
+  Unsupervised (anomaly detection):
     • Isolation Forest
     • Local Outlier Factor (LOF)
     • Gaussian Mixture Model (GMM)
 
-  Semi-Supervised:
-    • Isolation Forest (trained on normal data)
-    • LOF (trained on normal data)
-    • GMM (trained on normal data)
+  Semi-Supervised (normal-only):
+    • Isolation Forest (trained on legitimate data)
+    • LOF (trained on legitimate data)
+    • GMM (trained on legitimate data)
 
 WORKFLOW:
-  1. Data Preparation    → Feature engineering, SMOTE, scaling
-  2. Model Calibration   → GridSearchCV with TimeSeriesSplit
-  3. Model Application   → Predictions with threshold optimization
-  4. Visualization       → Confusion matrices, ROC curves, metrics
+  1. Data Preparation    → Feature engineering, scaling, SMOTE (train only), chronological split (train/val/test)
+  2. Model Calibration   → Optuna (TPE) with TimeSeriesSplit cross-validation
+  3. Model Application   → Validation-based threshold & ensemble selection, final evaluation on test only
+  4. Visualization       → PR/ROC curves, confusion matrices, summary metrics
 
 DOCUMENTATION:
-  • RESTRUCTURED_README.md    - Complete usage guide
-  • VERIFICATION_REPORT.md    - Code verification results
-  • RESTRUCTURE_SUMMARY.md    - Summary of changes
-  • requirements.txt          - Python dependencies
+  • README.md            - Project overview + how to run
+  • Proposal.md          - Project proposal / research framing
+  • environment.yml      - Conda environment specification
 
-For detailed information, see RESTRUCTURED_README.md
+ARTIFACTS:
+  • saved_models/trained_models.pkl   - Serialized trained models (joblib)
+  • output/                           - Generated figures and plots
 """
 
     print(info)
     input(Colors.BLUE + "Press Enter to continue..." + Colors.ENDC)
+
 
 
 def clear_screen():

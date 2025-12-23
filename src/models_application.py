@@ -18,10 +18,13 @@ def apply_models(data, models):
     Safely handles missing class metrics for imbalanced datasets.
     Now includes time tracking and detailed classification reports!
 
+    IMPORTANT: Uses validation set for threshold selection and ensemble calibration
+    to avoid data leakage from test set.
+
     Parameters:
     -----------
     data : dict
-        Dictionary containing test data
+        Dictionary containing validation and test data
     models : dict
         Dictionary containing trained models
 
@@ -30,8 +33,11 @@ def apply_models(data, models):
     results : dict
         Dictionary containing all predictions, evaluation metrics, summary, and feature importance
     """
+    # Extract test and validation sets
     X_test = data['X_test']
     y_test = data['y_test']
+    X_val = data['X_val']
+    y_val = data['y_val']
 
     predictions = {}
     model_reports = {}
@@ -40,6 +46,20 @@ def apply_models(data, models):
 
     # Store all probability/scores arrays for consistency
     all_probabilities = {}
+    # Store validation scores for ensemble selection (prevent test leakage)
+    validation_f1_scores = {}
+
+    # Create mapping from model display names to model keys
+    model_name_to_key = {
+        'Logistic Regression (Supervised)': 'best_lr',
+        'Random Forest (Supervised)': 'best_rf',
+        'Isolation Forest (Unsupervised)': 'best_iso',
+        'Local Outlier Factor (Unsupervised)': 'best_lof',
+        'Gaussian Mixture Models (Unsupervised)': 'best_gmm',
+        'Isolation Forest (Semi-Supervised)': 'best_iso_semi',
+        'Local Outlier Factor (Semi-Supervised)': 'best_lof_semi',
+        'Gaussian Mixture Model (Semi-Supervised)': 'best_gmm_semi'
+    }
 
     # --- Helper function to safely get classification metrics ---
     def safe_metrics(report, class_label='1'):
@@ -62,9 +82,18 @@ def apply_models(data, models):
         # Start timing
         start_time = time.time()
 
+        # Get probabilities on validation set to determine optimal threshold (NO TEST LEAKAGE)
+        y_prob_val = models[model_key].predict_proba(X_val)[:, 1]
+        optimal_threshold = get_optimal_threshold_f1(y_prob_val, y_val)
+
+        # Apply threshold to test set predictions
         y_prob = models[model_key].predict_proba(X_test)[:, 1]
-        optimal_threshold = get_optimal_threshold_f1(y_prob, y_test)
         y_pred = np.where(y_prob >= optimal_threshold, 1, 0)
+
+        # Calculate F1 on validation for ensemble selection later
+        y_pred_val = np.where(y_prob_val >= optimal_threshold, 1, 0)
+        from sklearn.metrics import f1_score
+        validation_f1_scores[model_name] = f1_score(y_val, y_pred_val, zero_division=0)
 
         predictions[model_name] = y_pred
         all_probabilities[model_name] = y_prob
@@ -85,9 +114,10 @@ def apply_models(data, models):
 
         # Print detailed results
         print(f"\n[TIME]  Evaluation Time: {elapsed_time:.2f}s")
-        print(f"[THRESHOLD] Optimal Threshold: {optimal_threshold:.4f}")
-        print(f"[ROC-AUC] ROC-AUC Score: {roc_auc:.4f}")
-        print(f"\n[REPORT] Classification Report:")
+        print(f"[THRESHOLD] Optimal Threshold (from validation): {optimal_threshold:.4f}")
+        print(f"[VALIDATION F1] F1-Score on Validation: {validation_f1_scores[model_name]:.4f}")
+        print(f"[ROC-AUC] ROC-AUC Score (test): {roc_auc:.4f}")
+        print(f"\n[REPORT] Classification Report (test):")
         print(classification_report(y_test, y_pred))
 
     # ===== UNSUPERVISED & SEMI-SUPERVISED MODELS =====
@@ -111,27 +141,38 @@ def apply_models(data, models):
             # Start timing
             start_time = time.time()
 
+            # Get scores on VALIDATION set to determine optimal threshold (NO TEST LEAKAGE)
             if 'Gaussian' in model_name:
+                scores_val = model.score_samples(X_val)
+                y_scores_val = -scores_val  # Convert to anomaly scores (higher = more anomalous)
                 scores = model.score_samples(X_test)
-                y_scores = -scores  # Convert to anomaly scores (higher = more anomalous)
+                y_scores = -scores
             else:
-                y_scores = -model.decision_function(X_test)  # Convert to anomaly scores
+                y_scores_val = -model.decision_function(X_val)  # Convert to anomaly scores
+                y_scores = -model.decision_function(X_test)
 
-            # Ensure scores have the same length as y_test
-            if len(y_scores) != len(y_test):
-                print(f"[WARNING] Score length mismatch: {len(y_scores)} vs {len(y_test)}")
-                # Truncate or pad to match (this should rarely happen)
-                min_len = min(len(y_scores), len(y_test))
-                y_scores = y_scores[:min_len]
-                y_test_adjusted = y_test[:min_len]
-            else:
-                y_test_adjusted = y_test
+            # Determine optimal threshold on validation set
+            optimal_threshold = get_optimal_threshold_f1(y_scores_val, y_val)
 
-            optimal_threshold = get_optimal_threshold_f1(y_scores, y_test_adjusted)
+            # Apply threshold to test set
             y_pred = np.where(y_scores >= optimal_threshold, 1, 0)
+
+            # Calculate F1 on validation for ensemble selection later
+            y_pred_val = np.where(y_scores_val >= optimal_threshold, 1, 0)
+            validation_f1_scores[model_name] = f1_score(y_val, y_pred_val, zero_division=0)
 
             predictions[model_name] = y_pred
             all_probabilities[model_name] = y_scores
+
+            # Ensure scores have the same length as y_test (safety check)
+            if len(y_scores) != len(y_test):
+                print(f"[WARNING] Score length mismatch: {len(y_scores)} vs {len(y_test)}")
+                min_len = min(len(y_scores), len(y_test))
+                y_scores = y_scores[:min_len]
+                y_pred = y_pred[:min_len]
+                y_test_adjusted = y_test[:min_len]
+            else:
+                y_test_adjusted = y_test
 
             report_dict = classification_report(y_test_adjusted, y_pred, output_dict=True)
             roc_auc = roc_auc_score(y_test_adjusted, y_scores)
@@ -149,9 +190,10 @@ def apply_models(data, models):
 
             # Print detailed results
             print(f"\n[TIME]  Evaluation Time: {elapsed_time:.2f}s")
-            print(f"[THRESHOLD] Optimal Threshold: {optimal_threshold:.4f}")
-            print(f"[ROC-AUC] ROC-AUC Score: {roc_auc:.4f}")
-            print(f"\n[REPORT] Classification Report:")
+            print(f"[THRESHOLD] Optimal Threshold (from validation): {optimal_threshold:.4f}")
+            print(f"[VALIDATION F1] F1-Score on Validation: {validation_f1_scores[model_name]:.4f}")
+            print(f"[ROC-AUC] ROC-AUC Score (test): {roc_auc:.4f}")
+            print(f"\n[REPORT] Classification Report (test):")
             print(classification_report(y_test_adjusted, y_pred))
 
         except Exception as e:
@@ -169,22 +211,12 @@ def apply_models(data, models):
         # Start timing
         start_time = time.time()
 
-        # Get F1-scores for each model (Class 1 only)
-        model_f1_scores = {}
-        for model_name in available_proba_models:
-            report = model_reports[model_name]['classification_report']
-            # Safely get F1-score for class 1
-            if '1' in report and isinstance(report['1'], dict):
-                f1 = report['1']['f1-score']
-            else:
-                f1 = 0.0
-            model_f1_scores[model_name] = f1
-
-        # Sort models by F1-score (descending) and select top 3
-        sorted_models = sorted(model_f1_scores.items(), key=lambda x: x[1], reverse=True)
+        # IMPORTANT: Use F1-scores from VALIDATION set (NO TEST LEAKAGE)
+        # Sort models by validation F1-score (descending) and select top 3
+        sorted_models = sorted(validation_f1_scores.items(), key=lambda x: x[1], reverse=True)
         top_3_models = sorted_models[:3]
 
-        # Extract model names and F1 scores
+        # Extract model names and F1 scores (from validation)
         ensemble_models = [name for name, _ in top_3_models]
         f1_scores = [f1 for _, f1 in top_3_models]
 
@@ -197,17 +229,50 @@ def apply_models(data, models):
             weights = [1.0 / len(ensemble_models)] * len(ensemble_models)
 
         # Print selected models and weights
-        print(f"Selected top 3 models by F1-score:")
+        print(f"Selected top 3 models by validation F1-score (NO TEST LEAKAGE):")
         for i, (model_name, f1, weight) in enumerate(zip(ensemble_models, f1_scores, weights), 1):
             print(f"  {i}. {model_name}")
-            print(f"     F1-Score: {f1:.4f} | Weight: {weight:.2%}")
+            print(f"     Validation F1-Score: {f1:.4f} | Weight: {weight:.2%}")
 
-        # Calculate F1-weighted ensemble predictions
+        # Calculate ensemble predictions on VALIDATION first to get optimal threshold
+        ensemble_proba_val = np.zeros(len(y_val))
+        for model_name, weight in zip(ensemble_models, weights):
+            # Get the model key from the mapping
+            model_key = model_name_to_key.get(model_name)
+            if model_key is None:
+                print(f"[WARNING] Model key not found for '{model_name}', skipping...")
+                continue
+
+            # Verify the model exists
+            if model_key not in models:
+                print(f"[WARNING] Model '{model_key}' not found in models dictionary, skipping...")
+                continue
+
+            try:
+                # Get validation probabilities/scores for each model
+                if 'Gaussian' in model_name or 'Isolation' in model_name or 'Outlier' in model_name:
+                    # For unsupervised/semi-supervised models
+                    if 'Gaussian' in model_name:
+                        scores_val = -models[model_key].score_samples(X_val)
+                    else:
+                        scores_val = -models[model_key].decision_function(X_val)
+                    ensemble_proba_val += weight * scores_val
+                else:
+                    # For supervised models
+                    proba_val = models[model_key].predict_proba(X_val)[:, 1]
+                    ensemble_proba_val += weight * proba_val
+            except Exception as e:
+                print(f"[ERROR] Error computing validation scores for {model_name}: {e}")
+                continue
+
+        # Get optimal threshold from validation set (NO TEST LEAKAGE)
+        optimal_threshold = get_optimal_threshold_f1(ensemble_proba_val, y_val)
+
+        # Now apply to test set
         ensemble_proba = np.zeros(len(y_test))
         for model_name, weight in zip(ensemble_models, weights):
             ensemble_proba += weight * all_probabilities[model_name]
 
-        optimal_threshold = get_optimal_threshold_f1(ensemble_proba, y_test)
         y_pred_ensemble = np.where(ensemble_proba >= optimal_threshold, 1, 0)
 
         predictions['F1-Weighted Ensemble (Top 3)'] = y_pred_ensemble
@@ -227,9 +292,9 @@ def apply_models(data, models):
 
         # Print detailed results
         print(f"\n[TIME]  Evaluation Time: {elapsed_time:.2f}s")
-        print(f"[THRESHOLD] Optimal Threshold: {optimal_threshold:.4f}")
-        print(f"[ROC-AUC] ROC-AUC Score: {roc_auc:.4f}")
-        print(f"\n[REPORT] Classification Report:")
+        print(f"[THRESHOLD] Optimal Threshold (from validation): {optimal_threshold:.4f}")
+        print(f"[ROC-AUC] ROC-AUC Score (test): {roc_auc:.4f}")
+        print(f"\n[REPORT] Classification Report (test):")
         print(classification_report(y_test, y_pred_ensemble))
     else:
         print("[WARNING] Not enough models for ensemble, skipping...")
