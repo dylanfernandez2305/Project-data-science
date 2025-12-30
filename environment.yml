@@ -4,34 +4,19 @@ channels:
   - defaults
 
 dependencies:
-  # Core Python
   - python=3.12
-  
-  # Data manipulation
-  - pandas=2.3.*
-  - numpy=1.26.*
-  
-  # Machine Learning
-  - scikit-learn=1.8.*
-  - scipy=1.16.*
-  - imbalanced-learn=0.12.*
-  
-  # Visualization
-  - matplotlib=3.9.*
-  - seaborn=0.13.*
-  - plotly=5.24.*
-  
-  # Dashboard
-  - streamlit=1.41.*
-  
-  # Build tools (required for SHAP/numba compilation on Mac)
+  - pandas
+  - numpy
+  - scikit-learn
+  - scipy
+  - imbalanced-learn
+  - matplotlib
+  - seaborn
+  - plotly
+  - streamlit
   - cmake
-  
-  # Additional utilities
   - tqdm
   - joblib
-  
-  # Pip dependencies
   - pip
   - pip:
     - kagglehub>=0.1.0
