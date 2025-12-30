@@ -4,9 +4,9 @@ channels:
   - defaults
 
 dependencies:
-  - python=3.12
-  - pandas
+  - python=3.11
   - numpy
+  - pandas
   - scikit-learn
   - scipy
   - imbalanced-learn
@@ -14,10 +14,9 @@ dependencies:
   - seaborn
   - plotly
   - streamlit
-  - cmake
   - tqdm
   - joblib
+  - shap
   - pip
   - pip:
     - kagglehub>=0.1.0
-    - shap>=0.40.0
