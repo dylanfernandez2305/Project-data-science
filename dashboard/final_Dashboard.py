@@ -8,9 +8,13 @@ Date: December 15, 2025
 Course: Advanced Programming 2025
 
 How to run:
-    streamlit run dashboard_clean.py
+    python run_dashboard.py
+    
+Alternative:
+    streamlit run dashboard/final_Dashboard.py
 """
 
+# ===== IMPORTS =====
 import streamlit as st
 import pandas as pd
 import numpy as np
