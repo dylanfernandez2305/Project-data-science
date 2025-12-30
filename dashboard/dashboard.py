@@ -11,7 +11,7 @@ How to run:
     python run_dashboard.py
     
 Alternative:
-    streamlit run dashboard/final_Dashboard.py
+    streamlit run dashboard/dashboard.py
 """
 
 # ===== IMPORTS =====
@@ -616,6 +616,7 @@ page = st.sidebar.radio(
         "Methodology",
         "Models Evaluated",
         "Performance Results",
+        "Interactive Comparison",
         "Technical Details"
     ]
 )
@@ -1234,6 +1235,137 @@ elif page == "Performance Results":
                  "❌ **Avoid:** ROC-AUC as primary metric",
                  card_type="warning")
 
+elif page == "Interactive Comparison":
+    st.title("Interactive Comparison")
+    st.markdown("**Compare any two models side-by-side in detail**")
+    st.markdown("---")
+    
+    # Bonus feature disclaimer
+    st.info("""
+    ℹ️ **Bonus Interactive Feature**  
+    This comparison tool is a dashboard-exclusive feature, not covered in the main project documentation.
+    It allows you to interactively compare any two models to better understand their trade-offs.
+    """)
+    
+    st.markdown("""
+    Select two models from the dropdowns below to see detailed comparisons.
+    """)
+    
+    # Model selection
+    col1, col2 = st.columns(2)
+    
+    model_names = [
+        "Logistic Regression (Supervised)",
+        "Random Forest (Supervised)",
+        "Isolation Forest (Unsupervised)",
+        "Local Outlier Factor (Unsupervised)",
+        "Gaussian Mixture Model (Unsupervised)",
+        "Isolation Forest (Semi-Supervised)",
+        "Local Outlier Factor (Semi-Supervised)",
+        "Gaussian Mixture Model (Semi-Supervised)",
+        "F1-Weighted Ensemble"
+    ]
+    
+    with col1:
+        st.markdown("### 🔵 Model A")
+        model_a = st.selectbox("Select first model", model_names, index=1, key="model_a")
+    
+    with col2:
+        st.markdown("### 🟢 Model B")
+        model_b = st.selectbox("Select second model", model_names, index=0, key="model_b")
+    
+    if model_a == model_b:
+        st.warning("⚠️ Please select two different models to compare")
+    else:
+        st.markdown("---")
+        
+        model_data = {
+            "Logistic Regression (Supervised)": {"fraud_precision": 0.78, "fraud_recall": 0.64, "fraud_f1": 0.70, "macro_precision": 0.89, "macro_recall": 0.82, "macro_f1": 0.85, "roc_auc": 0.980, "TP": 47, "FP": 13, "TN": 56658, "FN": 27},
+            "Random Forest (Supervised)": {"fraud_precision": 0.85, "fraud_recall": 0.72, "fraud_f1": 0.78, "macro_precision": 0.93, "macro_recall": 0.86, "macro_f1": 0.89, "roc_auc": 0.962, "TP": 53, "FP": 9, "TN": 56662, "FN": 21},
+            "Isolation Forest (Unsupervised)": {"fraud_precision": 0.02, "fraud_recall": 0.43, "fraud_f1": 0.04, "macro_precision": 0.51, "macro_recall": 0.70, "macro_f1": 0.52, "roc_auc": 0.870, "TP": 32, "FP": 1353, "TN": 55318, "FN": 42},
+            "Local Outlier Factor (Unsupervised)": {"fraud_precision": 0.07, "fraud_recall": 0.18, "fraud_f1": 0.10, "macro_precision": 0.53, "macro_recall": 0.59, "macro_f1": 0.55, "roc_auc": 0.890, "TP": 13, "FP": 183, "TN": 56488, "FN": 61},
+            "Gaussian Mixture Model (Unsupervised)": {"fraud_precision": 0.01, "fraud_recall": 0.30, "fraud_f1": 0.02, "macro_precision": 0.50, "macro_recall": 0.63, "macro_f1": 0.50, "roc_auc": 0.764, "TP": 22, "FP": 2641, "TN": 54030, "FN": 52},
+            "Isolation Forest (Semi-Supervised)": {"fraud_precision": 0.13, "fraud_recall": 0.47, "fraud_f1": 0.20, "macro_precision": 0.56, "macro_recall": 0.73, "macro_f1": 0.60, "roc_auc": 0.939, "TP": 35, "FP": 243, "TN": 56428, "FN": 39},
+            "Local Outlier Factor (Semi-Supervised)": {"fraud_precision": 0.12, "fraud_recall": 0.23, "fraud_f1": 0.16, "macro_precision": 0.56, "macro_recall": 0.61, "macro_f1": 0.58, "roc_auc": 0.884, "TP": 17, "FP": 127, "TN": 56544, "FN": 57},
+            "Gaussian Mixture Model (Semi-Supervised)": {"fraud_precision": 0.26, "fraud_recall": 0.36, "fraud_f1": 0.31, "macro_precision": 0.63, "macro_recall": 0.68, "macro_f1": 0.65, "roc_auc": 0.958, "TP": 27, "FP": 76, "TN": 56595, "FN": 47},
+            "F1-Weighted Ensemble": {"fraud_precision": 0.45, "fraud_recall": 0.64, "fraud_f1": 0.53, "macro_precision": 0.73, "macro_recall": 0.82, "macro_f1": 0.76, "roc_auc": 0.933, "TP": 47, "FP": 57, "TN": 56614, "FN": 27}
+        }
+        
+        data_a = model_data[model_a]
+        data_b = model_data[model_b]
+        
+        section_header("Performance Metrics Comparison")
+        
+        metrics_to_compare = ['fraud_precision', 'fraud_recall', 'fraud_f1', 'macro_precision', 'macro_recall', 'macro_f1', 'roc_auc']
+        winners = []
+        for metric in metrics_to_compare:
+            if data_a[metric] > data_b[metric]:
+                winners.append("🔵 " + model_a.split('(')[0].strip())
+            elif data_b[metric] > data_a[metric]:
+                winners.append("🟢 " + model_b.split('(')[0].strip())
+            else:
+                winners.append("Tie")
+        
+        comparison_df = pd.DataFrame({
+            'Metric': ['Fraud Precision', 'Fraud Recall', 'Fraud F1-Score', 'Macro Precision', 'Macro Recall', 'Macro F1-Score', 'ROC-AUC'],
+            '🔵 ' + model_a.split("(")[0].strip(): ["{:.3f}".format(data_a[m]) for m in metrics_to_compare],
+            '🟢 ' + model_b.split("(")[0].strip(): ["{:.3f}".format(data_b[m]) for m in metrics_to_compare],
+            'Winner': winners
+        })
+        
+        st.dataframe(comparison_df, use_container_width=True, hide_index=True)
+        st.markdown("---")
+        
+        section_header("Confusion Matrices Comparison")
+        
+        col1, col2 = st.columns(2)
+        with col1:
+            st.markdown("#### 🔵 " + model_a.split('(')[0].strip())
+            cm_a = np.array([[data_a['TN'], data_a['FP']], [data_a['FN'], data_a['TP']]])
+            fig_a = go.Figure(data=go.Heatmap(z=cm_a, x=['Predicted Legit', 'Predicted Fraud'], y=['Actual Legit', 'Actual Fraud'], text=cm_a, texttemplate='%{text}', textfont={"size": 16}, colorscale='Blues', showscale=False))
+            fig_a.update_layout(height=300, margin=dict(l=20, r=20, t=20, b=20), xaxis_title="Predicted", yaxis_title="Actual")
+            st.plotly_chart(fig_a, use_container_width=True)
+        
+        with col2:
+            st.markdown("#### 🟢 " + model_b.split('(')[0].strip())
+            cm_b = np.array([[data_b['TN'], data_b['FP']], [data_b['FN'], data_b['TP']]])
+            fig_b = go.Figure(data=go.Heatmap(z=cm_b, x=['Predicted Legit', 'Predicted Fraud'], y=['Actual Legit', 'Actual Fraud'], text=cm_b, texttemplate='%{text}', textfont={"size": 16}, colorscale='Greens', showscale=False))
+            fig_b.update_layout(height=300, margin=dict(l=20, r=20, t=20, b=20), xaxis_title="Predicted", yaxis_title="Actual")
+            st.plotly_chart(fig_b, use_container_width=True)
+        
+        st.markdown("---")
+        
+        section_header("Performance Radar Comparison")
+        
+        categories = ['Fraud\nPrecision', 'Fraud\nRecall', 'Fraud\nF1-Score', 'Macro\nPrecision', 'Macro\nRecall', 'Macro\nF1-Score', 'ROC-AUC']
+        fig_radar = go.Figure()
+        fig_radar.add_trace(go.Scatterpolar(r=[data_a[m] for m in metrics_to_compare], theta=categories, fill='toself', name="🔵 " + model_a.split('(')[0].strip(), line=dict(color='#3498db', width=2), fillcolor='#3498db', opacity=0.3))
+        fig_radar.add_trace(go.Scatterpolar(r=[data_b[m] for m in metrics_to_compare], theta=categories, fill='toself', name="🟢 " + model_b.split('(')[0].strip(), line=dict(color='#2ecc71', width=2), fillcolor='#2ecc71', opacity=0.3))
+        fig_radar.update_layout(polar=dict(radialaxis=dict(visible=True, range=[0, 1])), showlegend=True, height=500, margin=dict(l=80, r=80, t=80, b=80))
+        st.plotly_chart(fig_radar, use_container_width=True)
+        
+        st.markdown("---")
+        
+        section_header("Comparison Summary")
+        
+        wins_a = sum(1 for w in winners if model_a.split('(')[0].strip() in w)
+        wins_b = sum(1 for w in winners if model_b.split('(')[0].strip() in w)
+        
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            kpi_card("🔵 " + model_a.split('(')[0].strip(), "{} / 7 metrics".format(wins_a))
+        with col2:
+            winner = "🔵 " + model_a.split('(')[0].strip() if wins_a > wins_b else ("🟢 " + model_b.split('(')[0].strip() if wins_b > wins_a else "Tie")
+            kpi_card("Overall Winner", winner)
+        with col3:
+            kpi_card("🟢 " + model_b.split('(')[0].strip(), "{} / 7 metrics".format(wins_b))
+        
+        st.markdown("### Key Insights")
+        st.markdown("- **Higher F1-Score** indicates better overall fraud detection")
+        st.markdown("- **Higher Precision** means fewer false alarms")
+        st.markdown("- **Higher Recall** means catching more frauds")
+
+
 elif page == "Technical Details":
     st.title("Technical Details")
     st.markdown("**Implementation, code, and reproducibility**")
@@ -1242,7 +1374,7 @@ elif page == "Technical Details":
     section_header("Code Implementations")
     
     with st.expander("Validation-Based Threshold Optimization"):
-        st.markdown("**File:** `main.py`")
+        st.markdown("**File:** `src/main.py`")
         st.code("""
 def get_optimal_threshold_f1(anomaly_scores, y_true):
     '''
@@ -1292,7 +1424,7 @@ if_semi.fit(X_normal)
             """, language='python')
     
     with st.expander("F1-Weighted Ensemble"):
-        st.markdown("**File:** `models_application.py`")
+        st.markdown("**File:** `src/models_application.py`")
         st.code("""
 # Select top 3 by validation F1
 sorted_models = sorted(val_f1_scores.items(), key=lambda x: x[1], reverse=True)
@@ -1313,12 +1445,14 @@ threshold = get_optimal_threshold_f1(ensemble_proba_val, y_val)
     
     st.code("""
 Project_data_science_source/
+├── main.py                                   # Project entry point (imports src/main.py)
+│
 ├── READ/                                     # Documentation
 │   ├── README.md                                   # Project overview, setup & usage instructions
 │   └── Proposal.md                   (70 lines)    # Project proposal
 │
 ├── src/                                      # Source code
-│   ├── main.py                       (290 lines)   # Data loading & preprocessing
+│   ├── main.py                       (290 lines)   # Data loading & preprocessing (imported by root main.py)
 │   ├── models_calibration.py         (702 lines)   # Hyperparameter optimization
 │   ├── models_application.py         (429 lines)   # Model evaluation
 │   ├── performance_visualization.py  (589 lines)   # Results & data visualization
@@ -1328,7 +1462,7 @@ Project_data_science_source/
 │   └── creditcard.csv                              # Kaggle dataset (auto-downloaded)
 │
 ├── saved_models/                            # Trained model storage
-│   └── trained_models.pkl                          # All 8 models + ensemble
+│   └── .gitkeep                                    # Models stored on Google Drive (150MB)
 │
 ├── output/                                  # Generated visualizations
 │   ├── 0_class_distribution.png
@@ -1343,6 +1477,11 @@ Project_data_science_source/
 │   ├── 8_feature_importance_lr.png
 │   └── 9_lr_coefficients_signed.png
 │
+├── dashboard/                               # Interactive Streamlit dashboard
+│   ├── dashboard.py                                # 8-page visualization dashboard (~1700 lines)
+│   └── README.md                                   # Dashboard documentation
+│
+├── run_dashboard.py                         # Dashboard launcher script
 ├── environment.yml                          # Conda environment specification
 ├── AI-USAGE.md                              # AI tools transparency disclosure
 └── .gitignore                               # Git ignore rules
@@ -1359,13 +1498,13 @@ conda env create -f environment.yml
 conda activate data_science_project
 
 # Verify installation
-python menu.py
+python main.py
         """, language='bash')
     
     with st.expander("2. Data Preparation"):
         st.code(f"""
 # Run pipeline
-python menu.py → Option 1
+python main.py → Option 1
 
 # Output:
 # - {format_number(DatasetInfo.TOTAL_TRANSACTIONS)} transactions
@@ -1376,10 +1515,10 @@ python menu.py → Option 1
     with st.expander("3. Model Training"):
         st.code("""
 # Train all models (10-30 min)
-python menu.py → Option 2
+python main.py → Option 2
 
 # Output:
-# - saved_models/trained_models.pkl
+# - saved_models/.gitkeep (models on Google Drive)
         """, language='bash')
     
     st.markdown("---")

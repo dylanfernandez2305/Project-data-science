@@ -62,27 +62,22 @@ python menu.py
 ## Project Structure
 ```
 Project_data_science_source/
-├── dashboard/                               # Interactive Streamlit dashboard
-│   ├── final_Dashboard.py                          # 7-page visualization interface
-│   └── README.md                                   # Dashboard documentation
+├── README.md                                 # Project overview, setup & usage instructions
+├── PROPOSAL.md                    (70 lines) # Project proposal 
+├── main.py                                   # Main entry point (launches menu)
 │
-├── READ/                                    # Documentation
-│   ├── README.md                                   # Project overview, setup & usage instructions
-│   └── Proposal.md                  (70 lines)     # Project proposal
-│
-├── src/                                     # Source code
-│   ├── main.py                      (290 lines)    # Data loading & preprocessing
-│   ├── models_calibration.py        (702 lines)    # Hyperparameter optimization
-│   ├── models_application.py        (429 lines)    # Model evaluation
-│   ├── performance_visualization.py (589 lines)    # Results & data visualization
-│   └── menu.py                      (670 lines)    # Interactive menu system
+├── src/                                      # Source code
+│   ├── main.py                       (290 lines)   # Data loading & preprocessing
+│   ├── models_calibration.py         (701 lines)   # Hyperparameter optimization
+│   ├── models_application.py         (429 lines)   # Model evaluation
+│   ├── performance_visualization.py  (588 lines)   # Results & data visualization
+│   └── menu.py                       (670 lines)   # Interactive menu system
 │
 ├── data/                                    # Dataset storage
 │   └── creditcard.csv                              # Kaggle dataset (auto-downloaded)
 │
 ├── saved_models/                            # Trained model storage
-│   ├── .gitkeep                                    # Placeholder (download models from Google Drive)
-│   └── trained_models.pkl                          # All 8 individual models + ensemble
+│   └── .gitkeep                                    # Placeholder (download from Google Drive)
 │
 ├── output/                                  # Generated visualizations
 │   ├── 0_class_distribution.png
@@ -97,7 +92,12 @@ Project_data_science_source/
 │   ├── 8_feature_importance_lr.png
 │   └── 9_lr_coefficients_signed.png
 │
-├── run_dashboard.py                         # Quick launcher for Streamlit dashboard
+├── run_dashboard.py                         # Dashboard launcher with auto-install
+│
+├── dashboard/                               # Interactive Streamlit dashboard
+│   ├── dashboard.py                  (1573 lines)  # 8-page visualization interface
+│   └── README.md                                   # Dashboard documentation
+│
 ├── environment.yml                          # Conda environment specification
 ├── AI-USAGE.md                              # AI tools transparency disclosure
 └── .gitignore                               # Git ignore rules

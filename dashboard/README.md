@@ -6,11 +6,12 @@
 
 ## Dashboard Overview
 
-This interactive Streamlit dashboard provides a professional interface for exploring the Credit Card Fraud Detection project results. It visualizes model performance, dataset characteristics, and technical methodology across 7 comprehensive pages.
+This interactive Streamlit dashboard provides a professional interface for exploring the Credit Card Fraud Detection project results. It visualizes model performance, dataset characteristics, and technical methodology across 8 comprehensive pages.
 
 **Key Features:**
-- 7 interactive pages with Plotly visualizations
+- 8 interactive pages with Plotly visualizations
 - Real-time performance comparisons
+- Interactive model comparison tool
 - Feature engineering details (54 features)
 - Model evaluation metrics and insights
 
@@ -23,11 +24,11 @@ This interactive Streamlit dashboard provides a professional interface for explo
 python run_dashboard.py
 
 # Option 2: Direct Streamlit command
-streamlit run dashboard/final_Dashboard.py
+streamlit run dashboard/dashboard.py
 
 # Option 3: From dashboard folder
 cd dashboard
-streamlit run final_Dashboard.py
+streamlit run dashboard.py
 ```
 
 **The dashboard will automatically open in your browser at:** `http://localhost:8501`
@@ -64,7 +65,7 @@ conda activate data_science_project
 
 ## Dashboard Content
 
-### 7 Interactive Pages
+### 8 Interactive Pages
 
 #### 1. Home
 - Project title and elegant subtitle
@@ -98,8 +99,18 @@ conda activate data_science_project
 - Precision-Recall trade-off analysis
 - ROC-AUC interpretation for imbalanced datasets
 - Interactive performance tables
+- Call-to-action to Interactive Comparison page
 
-#### 7. Technical Details
+#### 7. Interactive Comparison ⭐ NEW
+- **Bonus interactive feature** for detailed model comparisons
+- Select any 2 models from dropdown menus (🔵 Model A vs 🟢 Model B)
+- Side-by-side metrics comparison table with "Winner" column
+- Confusion matrices comparison (color-coded: blue vs green)
+- Performance radar chart overlay (7 metrics)
+- Automated comparison summary with KPI cards
+- Key insights based on priorities (F1-Score, Precision, Recall)
+
+#### 8. Technical Details
 - Code implementation snippets
 - Project structure overview
 - Key technical references
@@ -114,7 +125,7 @@ conda activate data_science_project
 - **Tables**: Feature lists and performance metrics
 
 ### Navigation
-- **Sidebar menu**: Quick access to all 7 pages
+- **Sidebar menu**: Quick access to all 8 pages
 - **Quick Stats**: Key metrics always visible
 - **Project card**: Author and course information
 
@@ -149,13 +160,13 @@ python run_dashboard.py
 
 ### Method 2: Direct Command
 ```bash
-streamlit run dashboard/final_Dashboard.py
+streamlit run dashboard/dashboard.py
 ```
 
 ### Method 3: From Dashboard Folder
 ```bash
 cd dashboard
-streamlit run final_Dashboard.py
+streamlit run dashboard.py
 ```
 
 **Expected behavior:**
@@ -185,7 +196,7 @@ pip install streamlit --upgrade
 **Solution 3** - Check working directory:
 ```bash
 pwd                      # Should show project root
-ls dashboard/final_Dashboard.py  # Should exist
+ls dashboard/dashboard.py  # Should exist
 ```
 
 ### Port already in use
@@ -194,7 +205,7 @@ ls dashboard/final_Dashboard.py  # Should exist
 
 **Solution** - Use alternative port:
 ```bash
-streamlit run dashboard/final_Dashboard.py --server.port 8502
+streamlit run dashboard/dashboard.py --server.port 8502
 ```
 
 ### Missing module errors
@@ -238,7 +249,7 @@ Create `.vscode/launch.json` in project root:
             "module": "streamlit",
             "args": [
                 "run",
-                "${workspaceFolder}/dashboard/final_Dashboard.py"
+                "${workspaceFolder}/dashboard/dashboard.py"
             ],
             "console": "integratedTerminal"
         }
@@ -252,7 +263,7 @@ Create `.vscode/launch.json` in project root:
 
 ```
 dashboard/
-├── final_Dashboard.py    # Single-file dashboard (~1400 lines)
+├── dashboard.py          # Single-file dashboard (~1400 lines)
 └── README.md             # This file
 ```
 
@@ -262,7 +273,7 @@ dashboard/
 - All page navigation logic
 - All CSS styling and configurations
 
-**Total size:** ~50 KB, ~1400 lines of Python code
+**Total size:** ~60 KB, ~1700 lines of Python code
 
 ## Technologies Used
 
@@ -278,7 +289,7 @@ After launching the dashboard, verify the following:
 **Basic Functionality:**
 - [ ] Browser opens automatically to `http://localhost:8501`
 - [ ] Home page displays with blue italic subtitle
-- [ ] Sidebar shows 7 page navigation options
+- [ ] Sidebar shows 8 page navigation options
 - [ ] Quick Stats section displays key metrics
 
 **Page Content:**
@@ -289,6 +300,9 @@ After launching the dashboard, verify the following:
 - [ ] "View All 54 Features" expander works and shows grouped features
 - [ ] Models Evaluated page shows pie chart with 3 colors
 - [ ] Performance Results displays comparison charts
+- [ ] Interactive Comparison page allows selecting 2 different models
+- [ ] Comparison page shows confusion matrices in blue and green
+- [ ] Radar chart displays with both model overlays
 
 **Visual Elements:**
 - [ ] All charts are interactive (zoom, pan, hover)
@@ -314,7 +328,7 @@ All performance metrics, confusion matrices, and model comparisons displayed in 
 ### Reproducibility
 
 To regenerate the underlying results shown in the dashboard:
-1. Run the complete pipeline: `cd src && python menu.py`
+1. Run the complete pipeline: `python main.py`
 2. Select option [2] to train models (~15-30 minutes)
 3. Models and results will be saved to `saved_models/trained_models.pkl`
 4. The dashboard will reflect these results when launched
@@ -332,4 +346,4 @@ Dylan.Fernandez@unil.ch
 
 ---
 
-**For questions about the main project:** See [README.md](READ/README.md) in the project root
+**For questions about the main project:** See [README.md](../READ/README.md) in the project root

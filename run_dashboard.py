@@ -59,7 +59,7 @@ def main():
     """Launch the Streamlit dashboard"""
     # Get project root directory
     project_root = Path(__file__).parent
-    dashboard_file = project_root / "dashboard" / "final_Dashboard.py"
+    dashboard_file = project_root / "dashboard" / "dashboard.py"
     
     # Verify dashboard file exists
     if not dashboard_file.exists():
@@ -67,7 +67,7 @@ def main():
         print("ERROR: Dashboard file not found!")
         print("=" * 70)
         print(f"\nExpected location: {dashboard_file}")
-        print("\nPlease ensure the dashboard/ folder exists with final_Dashboard.py")
+        print("\nPlease ensure the dashboard/ folder exists with dashboard.py")
         print("=" * 70)
         sys.exit(1)
     
@@ -135,7 +135,7 @@ def main():
         print(f"\nError details: {e}")
         print("\nPlease check:")
         print("  1. Streamlit is installed: pip list | grep streamlit")
-        print("  2. Dashboard file exists: ls dashboard/final_Dashboard.py")
+        print("  2. Dashboard file exists: ls dashboard/dashboard.py")
         print("  3. Python environment is active")
         print("=" * 70 + "\n")
         sys.exit(1)
