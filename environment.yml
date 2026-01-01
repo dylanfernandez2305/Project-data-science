@@ -2,21 +2,25 @@ name: data_science_project
 channels:
   - conda-forge
   - defaults
-
 dependencies:
-  - python=3.11
-  - numpy
-  - pandas
-  - scikit-learn
-  - scipy
-  - imbalanced-learn
-  - matplotlib
-  - seaborn
+  - python>=3.11,<3.13
+
+  - numpy>=1.26,<3
+  - pandas>=2.1,<3
+  - scipy>=1.11,<2
+
+  - scikit-learn>=1.4,<2
+  - imbalanced-learn>=0.12
+  - joblib>=1.3
+
+  - optuna>=3
+  - matplotlib>=3.7
+  - seaborn>=0.13
   - plotly
   - streamlit
   - tqdm
-  - joblib
-  - shap
+
   - pip
   - pip:
-    - kagglehub>=0.1.0
+      - kagglehub>=0.1.0
+      - shap>=0.40.0
