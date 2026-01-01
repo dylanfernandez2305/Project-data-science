@@ -5,14 +5,23 @@
 import sys
 sys.dont_write_bytecode = True  # Prevent .pyc file creation
 
-from sklearn.metrics import classification_report, roc_auc_score
+# Allow running this file directly (e.g., `python src/models_application.py`) while
+# still using absolute imports like `from src...`.
+from pathlib import Path
+from typing import Any
+
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
+
+from sklearn.metrics import classification_report, roc_auc_score, f1_score
 import numpy as np
-from main import get_optimal_threshold_f1
+from src.data_loader import get_optimal_threshold_f1
 import pandas as pd
 import time
 
 
-def apply_models(data, models):
+def apply_models(data: dict[str, Any], models: dict[str, Any]) -> dict[str, Any]:
     """
     Apply all trained models to test data and generate predictions
     Safely handles missing class metrics for imbalanced datasets.
@@ -62,12 +71,6 @@ def apply_models(data, models):
     }
 
     # --- Helper function to safely get classification metrics ---
-    def safe_metrics(report, class_label='1'):
-        precision = report.get(class_label, {}).get('precision', 0)
-        recall = report.get(class_label, {}).get('recall', 0)
-        f1 = report.get(class_label, {}).get('f1-score', 0)
-        macro_f1 = report.get('macro avg', {}).get('f1-score', 0)
-        return precision, recall, f1, macro_f1
 
     # ===== SUPERVISED MODELS =====
     for model_name, model_key in [
@@ -92,7 +95,6 @@ def apply_models(data, models):
 
         # Calculate F1 on validation for ensemble selection later
         y_pred_val = np.where(y_prob_val >= optimal_threshold, 1, 0)
-        from sklearn.metrics import f1_score
         validation_f1_scores[model_name] = f1_score(y_val, y_pred_val, zero_division=0)
 
         predictions[model_name] = y_pred
@@ -409,10 +411,10 @@ def apply_models(data, models):
         "model_timings": model_timings,
     }
 
-def main():
+def main() -> tuple[dict[str, Any], dict[str, Any], dict[str, Any]]:
     """Main function to run model application"""
-    from main import load_and_prepare_data
-    from models_calibration import calibrate_models
+    from src.data_loader import load_and_prepare_data
+    from src.models_calibration import calibrate_models
 
     print("="*60)
     print("FRAUD DETECTION PIPELINE - MODEL APPLICATION")
