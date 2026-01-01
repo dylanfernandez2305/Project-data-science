@@ -5,6 +5,15 @@
 import sys
 sys.dont_write_bytecode = True  # Prevent .pyc file creation
 
+# Allow running this file directly (e.g., `python src/models_calibration.py`) while
+# still using absolute imports like `from src...`.
+from pathlib import Path
+from typing import Any
+
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
+
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier, IsolationForest
 from sklearn.neighbors import LocalOutlierFactor
@@ -12,7 +21,6 @@ from sklearn.mixture import GaussianMixture
 from sklearn.metrics import f1_score
 import numpy as np
 import joblib
-from pathlib import Path
 from datetime import datetime
 import optuna
 from optuna.samplers import TPESampler
@@ -29,7 +37,7 @@ warnings.filterwarnings('ignore', category=UserWarning, module='sklearn')
 OPTUNA_SEED = 42
 
 
-def calibrate_models(data):
+def calibrate_models(data: dict[str, Any]) -> dict[str, Any]:
     """
     Calibrate all models using Optuna for hyperparameter optimization
 
@@ -364,7 +372,7 @@ def calibrate_models(data):
                 threshold = np.percentile(scores_val, fraud_ratio * 100)
                 y_pred = (scores_val < threshold).astype(int)
                 scores.append(f1_score(y_val, y_pred, zero_division=0))
-            except:
+            except Exception:
                 return 0.0  # Return poor score if convergence fails
 
         return np.mean(scores)
@@ -531,7 +539,7 @@ def calibrate_models(data):
             threshold = np.percentile(scores_val, fraud_ratio * 100)
             y_pred = (scores_val < threshold).astype(int)
             return f1_score(y_val, y_pred, zero_division=0)
-        except:
+        except Exception:
             return 0.0
 
     sampler_gmm_semi = TPESampler(seed=OPTUNA_SEED)
@@ -559,7 +567,7 @@ def calibrate_models(data):
     return models
 
 
-def save_models(models, filename='trained_models.pkl'):
+def save_models(models: dict[str, Any], filename: str = 'trained_models.pkl') -> Path:
     """
     Save trained models using joblib (better cross-version compatibility)
 
@@ -601,7 +609,7 @@ def save_models(models, filename='trained_models.pkl'):
     return filepath
 
 
-def load_models(filename='trained_models.pkl'):
+def load_models(filename: str = 'trained_models.pkl') -> dict[str, Any]:
     """
     Load trained models using joblib (better cross-version compatibility)
 
@@ -673,10 +681,10 @@ def load_models(filename='trained_models.pkl'):
     return models
 
 
-def main():
+def main() -> tuple[dict[str, Any], dict[str, Any]]:
     """Main function to run model calibration"""
     # Import and prepare data
-    from main import load_and_prepare_data
+    from src.data_loader import load_and_prepare_data
 
     print("="*60)
     print("FRAUD DETECTION PIPELINE - MODEL CALIBRATION (OPTUNA)")
