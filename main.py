@@ -142,17 +142,21 @@ def _run_fallback_check() -> int:
         )
         return 1
     
-    # Display Success Summary
-    print("\n" + "═" * 70)
-    print("DATA PREPARATION SANITY CHECK - SUCCESS ✓")
-    print("═" * 70)
-    print(f"\n  Training set:    {int(data['y_train'].sum()):>5} frauds / {len(data['y_train']):>6} total")
-    print(f"  Validation set:  {int(data['y_val'].sum()):>5} frauds / {len(data['y_val']):>6} total")
-    print(f"  Test set:        {int(data['y_test'].sum()):>5} frauds / {len(data['y_test']):>6} total")
-    print(f"\n  Overall fraud ratio: {data['fraud_ratio']:.4%}")
-    print(f"  Total features:      {len(data['feature_names'])}")
-    print("\n" + "═" * 70)
-    print("\nEnvironment verified. Run 'python main.py' to launch the menu.")
+   # Display Success Summary
+    try:
+        print("\n" + "═" * 70)
+        print("DATA PREPARATION SANITY CHECK - SUCCESS ✓")
+        print("═" * 70)
+        print(f"\n  Training set:    {int(data['y_train'].sum()):>5} frauds / {len(data['y_train']):>6} total")
+        print(f"  Validation set:  {int(data['y_val'].sum()):>5} frauds / {len(data['y_val']):>6} total")
+        print(f"  Test set:        {int(data['y_test'].sum()):>5} frauds / {len(data['y_test']):>6} total")
+        print(f"\n  Overall fraud ratio: {data['fraud_ratio']:.4%}")
+        print(f"  Total features:      {len(data['feature_names'])}")
+        print("\n" + "═" * 70)
+        print("\nEnvironment verified. Run 'python main.py' to launch the menu.")
+    except KeyError as exc:
+        print(f"\n[WARNING] Data bundle missing key: {exc}")
+        print("Data preparation succeeded, but summary could not be displayed.\n")
     
     return 0
 
