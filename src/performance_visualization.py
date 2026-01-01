@@ -5,13 +5,20 @@
 import sys
 sys.dont_write_bytecode = True  # Prevent .pyc file creation
 
+# Allow running this file directly (e.g., `python src/performance_visualization.py`) while
+# still using absolute imports like `from src...`.
+from pathlib import Path
+
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
+
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.metrics import confusion_matrix, roc_curve, auc
 import pandas as pd
 import numpy as np
 import os
-from pathlib import Path
 from datetime import datetime
 
 
@@ -544,7 +551,7 @@ def visualize_performance(data, results, save_plots=True, show_plots=False, outp
 
 def main():
     """Main function to run performance visualization"""
-    from main import load_and_prepare_data
+    from src.data_loader import load_and_prepare_data
     from models_calibration import load_models
     from models_application import apply_models
 
