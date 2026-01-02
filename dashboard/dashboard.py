@@ -798,7 +798,7 @@ elif page == "Dataset Overview":
         fig_dist = create_class_distribution_chart(
             DatasetInfo.TOTAL_FRAUD, DatasetInfo.TOTAL_LEGITIMATE, use_log_scale=use_log
         )
-        st.plotly_chart(fig_dist, use_container_width=True)
+        st.plotly_chart(fig_dist, width="stretch")
     
     with col2:
         section_header("Challenge", divider=False)
@@ -842,7 +842,7 @@ elif page == "Dataset Overview":
         key_features_df = pd.DataFrame(KEY_ENGINEERED_FEATURES)
         st.dataframe(
             key_features_df,
-            use_container_width=True,
+            width="stretch",
             hide_index=True,
             column_config={
                 "name": st.column_config.TextColumn("Feature", width="medium"),
@@ -915,7 +915,7 @@ elif page == "Dataset Overview":
         plot_bgcolor='white', paper_bgcolor='white', height=400
     )
     
-    st.plotly_chart(fig_split, use_container_width=True)
+    st.plotly_chart(fig_split, width="stretch")
     
     info_card("Why Chronological Split?",
              """
@@ -966,7 +966,7 @@ elif page == "Methodology":
         'Calibration': ['Direct', 'Validation threshold', 'Validation threshold']
     })
     
-    st.dataframe(strategies_df, use_container_width=True, hide_index=True)
+    st.dataframe(strategies_df, width="stretch", hide_index=True)
     
     st.markdown("---")
     
@@ -1110,7 +1110,7 @@ elif page == "Models Evaluated":
     
     with col1:
         fig_ensemble = create_ensemble_composition_chart(ENSEMBLE_COMPOSITION)
-        st.plotly_chart(fig_ensemble, use_container_width=True)
+        st.plotly_chart(fig_ensemble, width="stretch")
     
     with col2:
         st.markdown("### Details")
@@ -1162,7 +1162,7 @@ elif page == "Performance Results":
     
     with tab1:
         fig_f1 = create_f1_comparison_chart(filtered_data, 'Fraud_F1')
-        st.plotly_chart(fig_f1, use_container_width=True)
+        st.plotly_chart(fig_f1, width="stretch")
         info_card("Key Insight",
                  "Supervised models significantly outperform unsupervised/semi-supervised. "
                  "Random Forest achieves highest fraud F1-score (0.78).",
@@ -1170,7 +1170,7 @@ elif page == "Performance Results":
     
     with tab2:
         fig_pr = create_precision_recall_scatter(filtered_data)
-        st.plotly_chart(fig_pr, use_container_width=True)
+        st.plotly_chart(fig_pr, width="stretch")
         info_card("Precision-Recall Trade-off",
                  "- **High Precision (0.85):** Random Forest minimizes false alarms\n"
                  "- **High Recall (0.72):** Detects 72% of actual fraud\n"
@@ -1182,7 +1182,7 @@ elif page == "Performance Results":
                                      'Fraud_F1', 'Macro_F1', 'ROC_AUC']].copy()
         for col in ['Fraud_Precision', 'Fraud_Recall', 'Fraud_F1', 'Macro_F1', 'ROC_AUC']:
             display_df[col] = display_df[col].apply(lambda x: f"{x:.2f}")
-        st.dataframe(display_df, use_container_width=True, hide_index=True)
+        st.dataframe(display_df, width="stretch", hide_index=True)
     
     if show_details:
         st.markdown("---")
@@ -1196,7 +1196,7 @@ elif page == "Performance Results":
         fig_cost = create_cost_comparison_chart(
             filtered_data['Model'].tolist(), costs, filtered_data['Paradigm'].tolist()
         )
-        st.plotly_chart(fig_cost, use_container_width=True)
+        st.plotly_chart(fig_cost, width="stretch")
         
         info_card("Cost Interpretation",
                  "Assuming FP cost = $1, FN cost = $10:\n\n"
@@ -1313,7 +1313,7 @@ elif page == "Interactive Comparison":
             'Winner': winners
         })
         
-        st.dataframe(comparison_df, use_container_width=True, hide_index=True)
+        st.dataframe(comparison_df, width="stretch", hide_index=True)
         st.markdown("---")
         
         section_header("Confusion Matrices Comparison")
@@ -1324,14 +1324,14 @@ elif page == "Interactive Comparison":
             cm_a = np.array([[data_a['TN'], data_a['FP']], [data_a['FN'], data_a['TP']]])
             fig_a = go.Figure(data=go.Heatmap(z=cm_a, x=['Predicted Legit', 'Predicted Fraud'], y=['Actual Legit', 'Actual Fraud'], text=cm_a, texttemplate='%{text}', textfont={"size": 16}, colorscale='Blues', showscale=False))
             fig_a.update_layout(height=300, margin=dict(l=20, r=20, t=20, b=20), xaxis_title="Predicted", yaxis_title="Actual")
-            st.plotly_chart(fig_a, use_container_width=True)
+            st.plotly_chart(fig_a, width="stretch")
         
         with col2:
             st.markdown("#### 🟢 " + model_b.split('(')[0].strip())
             cm_b = np.array([[data_b['TN'], data_b['FP']], [data_b['FN'], data_b['TP']]])
             fig_b = go.Figure(data=go.Heatmap(z=cm_b, x=['Predicted Legit', 'Predicted Fraud'], y=['Actual Legit', 'Actual Fraud'], text=cm_b, texttemplate='%{text}', textfont={"size": 16}, colorscale='Greens', showscale=False))
             fig_b.update_layout(height=300, margin=dict(l=20, r=20, t=20, b=20), xaxis_title="Predicted", yaxis_title="Actual")
-            st.plotly_chart(fig_b, use_container_width=True)
+            st.plotly_chart(fig_b, width="stretch")
         
         st.markdown("---")
         
@@ -1342,7 +1342,7 @@ elif page == "Interactive Comparison":
         fig_radar.add_trace(go.Scatterpolar(r=[data_a[m] for m in metrics_to_compare], theta=categories, fill='toself', name="🔵 " + model_a.split('(')[0].strip(), line=dict(color='#3498db', width=2), fillcolor='#3498db', opacity=0.3))
         fig_radar.add_trace(go.Scatterpolar(r=[data_b[m] for m in metrics_to_compare], theta=categories, fill='toself', name="🟢 " + model_b.split('(')[0].strip(), line=dict(color='#2ecc71', width=2), fillcolor='#2ecc71', opacity=0.3))
         fig_radar.update_layout(polar=dict(radialaxis=dict(visible=True, range=[0, 1])), showlegend=True, height=500, margin=dict(l=80, r=80, t=80, b=80))
-        st.plotly_chart(fig_radar, use_container_width=True)
+        st.plotly_chart(fig_radar, width="stretch")
         
         st.markdown("---")
         
@@ -1374,7 +1374,7 @@ elif page == "Technical Details":
     section_header("Code Implementations")
     
     with st.expander("Validation-Based Threshold Optimization"):
-        st.markdown("**File:** `src/main.py`")
+        st.markdown("**File:** `src/data_loader.py`")
         st.code("""
 def get_optimal_threshold_f1(anomaly_scores, y_true):
     '''
@@ -1445,26 +1445,27 @@ threshold = get_optimal_threshold_f1(ensemble_proba_val, y_val)
     
     st.code("""
 Project_data_science_source/
-├── main.py                                   # Project entry point (imports src/main.py)
+├── README.md                                     # Project overview, setup & usage instructions
+├── PROPOSAL.md                       (70 lines)  # Project proposal 
+├── main.py                                       # Entry point (launches menu)
+├── environment.yml                               # Conda environment specification
 │
-├── READ/                                     # Documentation
-│   ├── README.md                                   # Project overview, setup & usage instructions
-│   └── Proposal.md                   (70 lines)    # Project proposal
 │
-├── src/                                      # Source code
-│   ├── main.py                       (290 lines)   # Data loading & preprocessing (imported by root main.py)
-│   ├── models_calibration.py         (702 lines)   # Hyperparameter optimization
-│   ├── models_application.py         (429 lines)   # Model evaluation
-│   ├── performance_visualization.py  (589 lines)   # Results & data visualization
-│   └── menu.py                       (670 lines)   # Interactive menu system
+├── src/                                          # Source code
+│   ├── __init__.py                               # Package initializer
+│   ├── data_loader.py               (249 lines)  # Data loading & preprocessing
+│   ├── models_calibration.py        (710 lines)  # Hyperparameter optimization
+│   ├── models_application.py        (431 lines)  # Model evaluation and threshold optimization
+│   ├── performance_visualization.py (596 lines)  # Results & data visualization
+│   └── menu.py                      (631 lines)  # Interactive command-line interface
 │
-├── data/                                    # Dataset storage
-│   └── creditcard.csv                              # Kaggle dataset (auto-downloaded)
+├── data/                                         # Dataset storage
+│   └── creditcard.csv                            # Kaggle dataset (auto-downloaded, 144 MB)
 │
-├── saved_models/                            # Trained model storage
-│   └── .gitkeep                                    # Models stored on Google Drive (150MB)
+├── saved_models/                                 # Trained model storage
+│   └── trained_models.pkl                        # All 9 models (~313 MB, see Google Drive)
 │
-├── output/                                  # Generated visualizations
+├── output/                                       # Generated visualizations
 │   ├── 0_class_distribution.png
 │   ├── 0_amount_distribution.png
 │   ├── 1_confusion_matrices.png
@@ -1477,14 +1478,10 @@ Project_data_science_source/
 │   ├── 8_feature_importance_lr.png
 │   └── 9_lr_coefficients_signed.png
 │
-├── dashboard/                               # Interactive Streamlit dashboard
-│   ├── dashboard.py                                # 8-page visualization dashboard (~1700 lines)
-│   └── README.md                                   # Dashboard documentation
+├── dashboard/                                    # Interactive dashboard
+│   └── dashboard.py                 (1573 lines) # Streamlit web interface (8 pages)
 │
-├── run_dashboard.py                         # Dashboard launcher script
-├── environment.yml                          # Conda environment specification
-├── AI-USAGE.md                              # AI tools transparency disclosure
-└── .gitignore                               # Git ignore rules
+└── run_dashboard.py                              # Dashboard launcher with dependency checking
     """, language='text')
     
     st.markdown("---")
@@ -1518,7 +1515,8 @@ python main.py → Option 1
 python main.py → Option 2
 
 # Output:
-# - saved_models/.gitkeep (models on Google Drive)
+# - saved_models/trained_models.pkl (generated locally, ~313 MB)
+# - (Large file hosted on Google Drive for reviewers)
         """, language='bash')
     
     st.markdown("---")
