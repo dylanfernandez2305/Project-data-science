@@ -27,7 +27,7 @@ def apply_models(data: dict[str, Any], models: dict[str, Any]) -> dict[str, Any]
     Safely handles missing class metrics for imbalanced datasets.
     Now includes time tracking and detailed classification reports!
 
-    IMPORTANT: Uses validation set for threshold selection and ensemble calibration
+    IMPORTANT: Use validation set for threshold selection and ensemble calibration
     to avoid data leakage from test set.
 
     Parameters:
