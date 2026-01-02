@@ -1,6 +1,5 @@
 """Data loading, preprocessing, and shared utility functions.
 
-Moved out of the former `src/main.py` to keep a clean project entry point.
 
 Public API (used across the codebase):
 - time_of_day
