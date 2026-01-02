@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
+# Interactive command-line interface
+# This file provides a central menu to run all project components
+
 """
 Interactive Terminal Menu for Fraud Detection Pipeline
-This script provides a central command center to run all project components
+This script provides a central command center to run all project components.
 """
 
+# ===== IMPORTS =====
 import os
 import sys
 import subprocess
