@@ -36,6 +36,11 @@ conda activate data_science_project
 pip install streamlit plotly pandas numpy
 ```
 
+## First-Time Setup
+
+When running Streamlit for the first time, you'll be prompted for an email address. 
+This is optional—simply press `Enter` to skip and proceed to the dashboard.
+
 ---
 
 ## Dashboard Features

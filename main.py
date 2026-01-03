@@ -20,9 +20,7 @@ Project Structure:
     data/                       # Dataset storage
     saved_models/               # Trained models
     output/                     # Generated visualizations
-
-Author: Dylan Fernandez
-Course: Advanced Programming 2025, HEC Lausanne
+    
 """
 
 from __future__ import annotations

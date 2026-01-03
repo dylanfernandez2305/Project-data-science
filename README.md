@@ -19,17 +19,26 @@ cd Project-data-science
 conda env create -f environment.yml
 conda activate data_science_project
 
+# 1b) (Optional) Verify core imports
+python -c "import numpy,pandas,scipy,sklearn,imblearn,optuna,matplotlib,seaborn,plotly,streamlit,shap; print('imports ok')"
+
 # 2) Run the project
 python main.py
 ```
 
 **Recommended workflow:**
 1. **[5]** Check Environment
-2. **[6]** Check Saved Models (pre-trained models included)
-3. **[3]** Evaluate Saved Models (~5 min)
-4. **[4]** Generate Visualizations (~3 min)
+2. **[1]** Download the Dataset (30 seconds)
+3. **[6]** Check Saved Models (pre-trained models included)
+4. **[3]** Evaluate Saved Models (~4 min)
+5. **[4]** Generate Visualizations (~3 min)
 
 **Note:** Training new models ([2]) takes 15-30 minutes and is not required for evaluation.
+
+**Recommended (if the environment already exists):**
+```bash
+conda env update -n data_science_project -f environment.yml --prune
+conda activate data_science_project
 
 ---
 
@@ -150,8 +159,6 @@ Expected duration for each operation:
    # Select [3] Evaluate Models
    ```
 
-**If the file is incompatible** (library versions changed), retrain using [2].
-
 ### Alternative: Train Yourself
 
 ```bash
@@ -190,10 +197,32 @@ If automatic download fails:
 
 ## Troubleshooting (common)
 
-- **Dataset missing:** put `creditcard.csv` in `data/` (or enable auto-download via `kagglehub`)
-- **Model file incompatible:** retrain with [2]
-- **Dependency issues:** use menu option [5] to diagnose versions (NumPy 2.x supported; avoid 3.x)
+### **Dataset missing**
+Put `creditcard.csv` in `data/` (or enable auto-download via `kagglehub`)
 
+### **Imports fail during the verification step**
+If the import check fails, make sure the environment is activated:
+```bash
+conda activate data_science_project
+```
+
+Check which Python is used and whether Optuna is installed:
+```bash
+python -c "import sys, importlib.metadata as m; print(sys.executable); print('optuna', m.version('optuna'))"
+```
+
+If a specific module is missing (example: optuna), install it with:
+```bash
+pip install optuna
+```
+
+**Alternative (slower):**
+```bash
+conda install -c conda-forge optuna -y
+```
+
+### **Dependency issues**
+Use menu option [5] to diagnose versions (NumPy 2.x supported; avoid 3.x)
 ---
 
 ## Documentation
