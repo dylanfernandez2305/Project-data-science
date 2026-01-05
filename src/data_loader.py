@@ -1,12 +1,7 @@
-"""Data loading, preprocessing, and shared utility functions.
+# Data loading and preparation
+# This file contains code for loading, cleaning, and preprocessing the fraud detection dataset
 
-
-Public API (used across the codebase):
-- time_of_day
-- get_optimal_threshold_f1
-- load_and_prepare_data
-"""
-
+# ===== IMPORTS =====
 from __future__ import annotations
 
 import os
