@@ -434,7 +434,7 @@ def check_environment():
 
     # Optional packages
     print("\n" + Colors.BOLD + "Optional Packages:" + Colors.ENDC)
-    optional = [('kagglehub', 'KaggleHub'), ('shap', 'SHAP')]
+    optional = [('kagglehub', 'KaggleHub')]
     for module_name, display_name in optional:
         try:
             module = __import__(module_name)
