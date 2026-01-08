@@ -4,7 +4,7 @@ Test all imports before running fraud detection pipeline.
 
 Usage:
     conda activate data_science_project
-    python test_imports.py
+    python test_environment.py
     
 Expected output:
     ✓ ALL IMPORTS SUCCESSFUL!
